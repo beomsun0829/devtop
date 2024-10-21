@@ -1,14 +1,20 @@
 #include <ncurses.h>
-#include "cpu.hpp"
 #include <cstdio>
 #include <unistd.h>
+#include "cpu.hpp"
+
 
 void displayOverview(WINDOW* win) {
     CPU cpu;
     werase(win);
-    mvwprintw(win, 1, 1, "CPU Usage: %.2f%%", cpu.getUsage());
-    mvwprintw(win, 2, 1, "Temp: %.2f°C", cpu.getTemperature());
-    mvwprintw(win, 3, 1, "Clock: %.2fGHz", cpu.getClockSpeed());
+	cpu.getUsage();
+	usleep(100000);
+	float cpu_usage = cpu.getUsage();
+
+	mvwprintw(win, 1, 1, "CPU Usage: %s", getCPUUsageBar(getmaxx(win), cpu_usage).c_str());
+    mvwprintw(win, 3, 1, "CPU Usage: %.2f%%", cpu_usage);
+    mvwprintw(win, 4, 1, "Temp: %.2f°C", cpu.getTemperature());
+    mvwprintw(win, 5, 1, "Clock: %.2fGHz", cpu.getClockSpeed());
     wrefresh(win);
 }
 
