@@ -7,11 +7,11 @@
 void displayOverview(WINDOW* win) {
     CPU cpu;
     werase(win);
-	cpu.getUsage();
-	usleep(100000);
-	float cpu_usage = cpu.getUsage();
+    cpu.getUsage();
+    usleep(100000);
+    float cpu_usage = cpu.getUsage();
 
-	mvwprintw(win, 1, 1, "CPU Usage: %s", getCPUUsageBar(getmaxx(win), cpu_usage).c_str());
+    mvwprintw(win, 1, 1, "CPU Usage: %s", getCPUUsageBar(getmaxx(win), cpu_usage).c_str());
     mvwprintw(win, 3, 1, "CPU Usage: %.2f%%", cpu_usage);
     mvwprintw(win, 4, 1, "Temp: %.2f°C", cpu.getTemperature());
     mvwprintw(win, 5, 1, "Clock: %.2fGHz", cpu.getClockSpeed());

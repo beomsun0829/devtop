@@ -7,10 +7,10 @@
 using namespace std;
 
 string getCPUUsageBar(int terminal_width, float usage){
-	int bar_length = terminal_width - 20;
-	bar_length = bar_length > 0 ? bar_length : 0;
-	int filled_length = static_cast<int>(usage * bar_length / 100.0);
-	
+    int bar_length = terminal_width - 20;
+    bar_length = bar_length > 0 ? bar_length : 0;
+    int filled_length = static_cast<int>(usage * bar_length / 100.0);
+    
     string bar = "[" + string(filled_length, '#') + string(bar_length - filled_length, ' ') + "]";
     return bar;
 }
@@ -34,52 +34,51 @@ float CPU::getUsage() {
     prev_idle = idle_time;
     prev_total = total_time;
 	
-	if(delta_total == 0){
-		return 0.0f;
-	}
+    if(delta_total == 0){
+        return 0.0f;
+    }
 		
     return (1.0f - static_cast<float>(delta_idle) / static_cast<float>(delta_total)) * 100.0f;
 }
 
 float CPU::getTemperature() {
-	string base_path = "/sys/class/thermal/";
-	string temp_path;
+    string base_path = "/sys/class/thermal/";
+    string temp_path;
 
-	bool found = false;
-	for (const auto& entry : filesystem::directory_iterator(base_path)){
-		if (entry.is_directory() && entry.path().filename().string().find("thermal_zone") != string::npos){
-			string type_path = entry.path().string() + "/type";
-			ifstream typeFile(type_path);
+    bool found = false;
+    for (const auto& entry : filesystem::directory_iterator(base_path)){
+        if (entry.is_directory() && entry.path().filename().string().find("thermal_zone") != string::npos){
+            string type_path = entry.path().string() + "/type";
+            ifstream typeFile(type_path);
 
-			if (!typeFile.is_open()){
-				continue;
-			}
-			
-			string type;
-			getline(typeFile, type);
-			
-			if (type == "x86_pkg_temp"){
-				temp_path = entry.path().string() + "/temp";
-				found = true;
-				break;
-			}
-		}
-	}
+            if (!typeFile.is_open()){
+                continue;
+            }
+
+            string type;
+            getline(typeFile, type);
+
+            if (type == "x86_pkg_temp"){
+                temp_path = entry.path().string() + "/temp";
+                found = true;
+                break;
+            }
+        }
+    }
 	
-	if (!found){
-		return 0.0f;
-	}
-	
-	ifstream tempFile(temp_path);
-	if(!tempFile.is_open()){
-		return 0.0f;
-	}
-	
-	int temp_milli;
-	tempFile >> temp_milli;
-	
-	return temp_milli / 1000.0f;
-	
+    if (!found){
+        return 0.0f;
+    }
+
+    ifstream temp_file(temp_path);
+    if(!temp_file.is_open()){
+        return 0.0f;
+    }
+    
+    int temp_milli;
+    temp_file >> temp_milli;
+    
+    return temp_milli / 1000.0f;
 }
 
 float CPU::getClockSpeed() {
