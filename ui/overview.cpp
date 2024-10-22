@@ -1,33 +1,47 @@
 #include <ncurses.h>
 #include <cstdio>
 #include <unistd.h>
-#include "cpu.hpp"
 
+#include "cpu.hpp"
+#include "memory.hpp"
+#include "format.hpp"
 
 void displayOverview(WINDOW* win) {
     CPU cpu;
     werase(win);
+    int terminal_width = getmaxx(win);
+
     cpu.getUsage();
     usleep(100000);
-    float cpu_usage = cpu.getUsage();
 
-    mvwprintw(win, 1, 1, "CPU Usage: %s", getCPUUsageBar(getmaxx(win), cpu_usage).c_str());
-    mvwprintw(win, 3, 1, "CPU Usage: %.2f%%", cpu_usage);
-    mvwprintw(win, 4, 1, "Temp: %.2f°C", cpu.getTemperature());
-    mvwprintw(win, 5, 1, "Clock: %.2fGHz", cpu.getClockSpeed());
+    float cpu_usage = cpu.getUsage();
+    float mem_usage = getMemoryUsage();
+    
+    int text_width = 8;
+    int value_width = 6;
+
+    mvwprintw(win, 1, 1, "%-*s %*.2f%% %s", text_width, "CPU", value_width, cpu_usage, usageBar(terminal_width, cpu_usage).c_str());
+    mvwprintw(win, 2, 1, "%-*s %*.2f  C", text_width, "Temp", value_width, cpu.getTemperature());
+    mvwprintw(win, 3, 1, "%-*s %*.2f  GHz", text_width, "Clock", value_width, cpu.getClockSpeed());
+    mvwprintw(win, 5, 1, "%-*s %*.2f%% %s", text_width, "Mem", value_width, mem_usage, usageBar(terminal_width, mem_usage).c_str());
+
     wrefresh(win);
 }
 
 void runOverview() {
-    WINDOW* win = newwin(10, 50, 0, 0);
+    int max_y, max_x;
+    getmaxyx(stdscr, max_y, max_x);
+    WINDOW* win = newwin(max_y, max_x, 0, 0);
 
     while (true) {
+        getmaxyx(stdscr, max_y, max_x);
+        wresize(win, max_y, max_x);
+
         displayOverview(win);
         if (getch() == 'q') {
             break;
         }
         sleep(1);
     }
-
     delwin(win);
 }

@@ -6,15 +6,6 @@
 #include "cpu.hpp"
 using namespace std;
 
-string getCPUUsageBar(int terminal_width, float usage){
-    int bar_length = terminal_width - 20;
-    bar_length = bar_length > 0 ? bar_length : 0;
-    int filled_length = static_cast<int>(usage * bar_length / 100.0);
-    
-    string bar = "[" + string(filled_length, '#') + string(bar_length - filled_length, ' ') + "]";
-    return bar;
-}
-
 float CPU::getUsage() {
     ifstream file("/proc/stat");
     string line;
