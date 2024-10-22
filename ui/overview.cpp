@@ -5,25 +5,28 @@
 #include "cpu.hpp"
 #include "memory.hpp"
 #include "format.hpp"
+#include "user.hpp"
+#include "system.hpp"
 
 void displayOverview(WINDOW* win) {
     CPU cpu;
     werase(win);
-    int terminal_width = getmaxx(win);
 
     cpu.getUsage();
     usleep(100000);
 
     float cpu_usage = cpu.getUsage();
     float mem_usage = getMemoryUsage();
-    
-    int text_width = 8;
-    int value_width = 6;
 
-    mvwprintw(win, 1, 1, "%-*s %*.2f%% %s", text_width, "CPU", value_width, cpu_usage, usageBar(terminal_width, cpu_usage).c_str());
-    mvwprintw(win, 2, 1, "%-*s %*.2f  C", text_width, "Temp", value_width, cpu.getTemperature());
-    mvwprintw(win, 3, 1, "%-*s %*.2f  GHz", text_width, "Clock", value_width, cpu.getClockSpeed());
-    mvwprintw(win, 5, 1, "%-*s %*.2f%% %s", text_width, "Mem", value_width, mem_usage, usageBar(terminal_width, mem_usage).c_str());
+    int terminal_width = getmaxx(win);    
+    int text_width = 12;
+
+    mvwprintw(win, 1, 1, "%-*s %s", text_width, "User", getCurrentUser().c_str());
+    mvwprintw(win, 2, 1, "%-*s %s", text_width, "Uptime", getUptime().c_str());
+    mvwprintw(win, 4, 1, "%-*s %s%%   %s", text_width, "CPU", formatPercentage(cpu_usage).c_str(), usageBar(terminal_width, cpu_usage).c_str());
+    mvwprintw(win, 5, 1, "%-*s %05.2f  C", text_width, "Temperature", cpu.getTemperature());
+    mvwprintw(win, 6, 1, "%-*s %05.2f  GHz", text_width, "Clock", cpu.getClockSpeed());
+    mvwprintw(win, 8, 1, "%-*s %s%%   %s", text_width, "Memory", formatPercentage(mem_usage).c_str(), usageBar(terminal_width, mem_usage).c_str());
 
     wrefresh(win);
 }

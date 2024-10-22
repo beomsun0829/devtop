@@ -5,5 +5,6 @@
 using namespace std;
 
 string usageBar(int terminal_width, float usage);
+string formatPercentage(float value);
 
 #endif
