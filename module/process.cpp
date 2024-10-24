@@ -1,5 +1,7 @@
-#include <cstdio>
+#include <iostream>
 #include <string>
+#include <sstream>
+#include <fstream>
 #include "process.hpp"
 using namespace std;
 
@@ -26,4 +28,18 @@ ProcessInfo getProcessInfo() {
     info.sleeping = info.total - info.running;
 
     return info;
+}
+
+LoadAvg getLoadAvg(){
+    ifstream file("/proc/loadavg");
+    string line;
+    LoadAvg load_avg = {0.0, 0.0, 0.0};
+
+    if (getline(file, line)) {
+        istringstream iss(line);
+        iss >> load_avg.one_min >> load_avg.five_min >> load_avg.fifteen_min;
+    }
+
+    file.close();
+    return load_avg;
 }

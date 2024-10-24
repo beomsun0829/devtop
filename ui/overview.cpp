@@ -28,6 +28,7 @@ void displayOverview(WINDOW* win) {
     string active_interface;
     NetworkStats net_stats = getMainNetworkUsage(active_interface);
     ProcessInfo proc_info = getProcessInfo();
+    LoadAvg load_avg = getLoadAvg();
 
     mvwprintw(win, 1, 1, "%-*s %s", text_width, "User", getCurrentUser().c_str());
     mvwprintw(win, 2, 1, "%-*s %s", text_width, "Uptime", getUptime().c_str());
@@ -40,9 +41,10 @@ void displayOverview(WINDOW* win) {
     
     mvwprintw(win, 10, 1, "%-*s %s%% %s", text_width, "Disk", formatPercentage(disk_usage).c_str(), usageBar(terminal_width, disk_usage).c_str());
 
-    mvwprintw(win, 12, 1, "%-*s %s %.3f %s %.3f", text_width, "Network", "Download", net_stats.download_speed, "Upload", net_stats.upload_speed);
+    mvwprintw(win, 12, 1, "%-*s %s %.2f %s %.2f", text_width, "Network", "Download", net_stats.download_speed, "Upload", net_stats.upload_speed);
     
     mvwprintw(win, 14, 1, "%-*s %s %d  %s %d  %s %d", text_width, "Process", "Total", proc_info.total, "Running", proc_info.running, "Sleeping", proc_info.sleeping);  
+    mvwprintw(win, 15, 1, "%-*s %s %.2f  %s %.2f  %s %.2f", text_width, "Load Avg", "1m", load_avg.one_min, "5m", load_avg.five_min, "15m", load_avg.fifteen_min); 
 
     wrefresh(win);
 }
