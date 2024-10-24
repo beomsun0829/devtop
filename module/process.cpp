@@ -2,6 +2,8 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <vector>
+
 #include "process.hpp"
 using namespace std;
 
@@ -20,14 +22,14 @@ int runCommand(const char* cmd) {
     return stoi(result);
 }
 
-ProcessInfo getProcessInfo() {
-    ProcessInfo info;
+ProcessCount getProcessCount() {
+    ProcessCount process_count;
     
-    info.total = runCommand("ps -e --no-headers | wc -l");
-    info.running = runCommand("ps -e -o state --no-headers | grep -c \"R\"");
-    info.sleeping = info.total - info.running;
+    process_count.total = runCommand("ps -e --no-headers | wc -l");
+    process_count.running = runCommand("ps -e -o state --no-headers | grep -c \"R\"");
+    process_count.sleeping = process_count.total - process_count.running;
 
-    return info;
+    return process_count;
 }
 
 LoadAvg getLoadAvg(){
@@ -43,3 +45,21 @@ LoadAvg getLoadAvg(){
     file.close();
     return load_avg;
 }
+
+vector<ProcessInfo> getTopProcesses() {
+    vector<ProcessInfo> processes;
+    FILE* pipe = popen("ps -eo pid,comm,pcpu --sort=-pcpu --no-headers | head -n 5", "r");
+    if (!pipe) return processes;
+
+    char buffer[128];
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        istringstream iss(buffer);
+        ProcessInfo proc;
+        iss >> proc.pid >> proc.command >> proc.usage;
+        processes.push_back(proc);
+    }
+
+    pclose(pipe);
+    return processes;
+}
+    

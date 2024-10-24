@@ -2,6 +2,7 @@
 #include <ncurses.h>
 #include <cstdio>
 #include <unistd.h>
+#include <vector>
 
 #include "cpu.hpp"
 #include "memory.hpp"
@@ -27,8 +28,9 @@ void displayOverview(WINDOW* win) {
     float disk_usage = getDiskUsage("/");
     string active_interface;
     NetworkStats net_stats = getMainNetworkUsage(active_interface);
-    ProcessInfo proc_info = getProcessInfo();
+    ProcessCount proc_info = getProcessCount();
     LoadAvg load_avg = getLoadAvg();
+    vector<ProcessInfo> top_processes = getTopProcesses();
 
     mvwprintw(win, 1, 1, "%-*s %s", text_width, "User", getCurrentUser().c_str());
     mvwprintw(win, 2, 1, "%-*s %s", text_width, "Uptime", getUptime().c_str());
@@ -45,6 +47,11 @@ void displayOverview(WINDOW* win) {
     
     mvwprintw(win, 14, 1, "%-*s %s %d  %s %d  %s %d", text_width, "Process", "Total", proc_info.total, "Running", proc_info.running, "Sleeping", proc_info.sleeping);  
     mvwprintw(win, 15, 1, "%-*s %s %.2f  %s %.2f  %s %.2f", text_width, "Load Avg", "1m", load_avg.one_min, "5m", load_avg.five_min, "15m", load_avg.fifteen_min); 
+    
+    mvwprintw(win, 17, 1, "%-*s %-6s %-10s %-9s", text_width, "High Usage", "PID", "Command", "CPU Usage");
+    for (int i = 0; i < 5 && i < top_processes.size(); i++) {
+        mvwprintw(win, 18 + i, 1, "%-*s %-6d %-10s %-6.2f%%", text_width, "", top_processes[i].pid, top_processes[i].command.c_str(), top_processes[i].usage);
+    }
 
     wrefresh(win);
 }
