@@ -1,6 +1,8 @@
 #ifndef OVERVIEW_HPP
 #define OVERVIEW_HPP
 
-void runOverview();
+#include <ncurses.h>
+
+void runOverview(WINDOW* win);
 
 #endif

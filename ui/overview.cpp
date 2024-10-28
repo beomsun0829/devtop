@@ -56,20 +56,7 @@ void displayOverview(WINDOW* win) {
     wrefresh(win);
 }
 
-void runOverview() {
-    int max_y, max_x;
-    getmaxyx(stdscr, max_y, max_x);
-    WINDOW* win = newwin(max_y, max_x, 0, 0);
 
-    while (true) {
-        getmaxyx(stdscr, max_y, max_x);
-        wresize(win, max_y, max_x);
-
-        displayOverview(win);
-        if (getch() == 'q') {
-            break;
-        }
-        sleep(0.2);
-    }
-    delwin(win);
+void runOverview(WINDOW* win) {
+    displayOverview(win);
 }
