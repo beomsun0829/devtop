@@ -3,8 +3,11 @@
 
 #include "ui/overview.hpp"
 #include "ui/menubar.hpp"
+#include "ui/system_logs.hpp"
 
 #define FRAMES_PER_SECOND 30
+
+void run_menu(int selected_menu, WINDOW* main_win, int ch);
 
 int main() {
     initscr();
@@ -21,7 +24,7 @@ int main() {
     int max_y, max_x;
     getmaxyx(stdscr, max_y, max_x);
 
-    WINDOW* overview_win = newwin(max_y - 2, max_x, 0, 0);
+    WINDOW* main_win = newwin(max_y - 2, max_x, 0, 0);
     WINDOW* menu_win = newwin(2, max_x, max_y - 2, 0);
     
     int ch;
@@ -33,26 +36,40 @@ int main() {
         else if (ch >= '1' && ch <= '6') {
             selected_menu = ch - '1';
         }
-
-        werase(overview_win);
+        
+        werase(main_win);
         werase(menu_win);
-
-        if (selected_menu == 0) {
-            runOverview(overview_win);
-        }
+        
+        run_menu(selected_menu, main_win, ch);
 
         drawMenuBar(menu_win, selected_menu);
 
-        wnoutrefresh(overview_win);
+        wnoutrefresh(main_win);
         wnoutrefresh(menu_win);
         doupdate();
 
         napms(1000 / FRAMES_PER_SECOND);
     }
 
-    delwin(overview_win);
+    delwin(main_win);
     delwin(menu_win);
     endwin();
 
     return 0;
+}
+
+void run_menu(int selected_menu, WINDOW* main_win, int ch){
+    switch(selected_menu){
+        case 0:
+            displayOverview(main_win);
+            break;
+
+        case 5:
+            displaySystemLogs(main_win, ch);
+            break;
+
+        default:
+            displayOverview(main_win);
+            break;
+    }
 }

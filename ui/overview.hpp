@@ -3,6 +3,6 @@
 
 #include <ncurses.h>
 
-void runOverview(WINDOW* win);
+void displayOverview(WINDOW* win);
 
 #endif

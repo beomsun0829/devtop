@@ -14,7 +14,6 @@
 #include "process.hpp"
 
 void displayOverview(WINDOW* win) {
-    werase(win);
     int terminal_width = getmaxx(win);    
     int text_width = 12;
 
@@ -53,10 +52,4 @@ void displayOverview(WINDOW* win) {
         mvwprintw(win, 18 + i, 1, "%-*s %-6d %-10s %6.2f%%", text_width, "", top_processes[i].pid, top_processes[i].command.c_str(), top_processes[i].usage);
     }
 
-    wrefresh(win);
-}
-
-
-void runOverview(WINDOW* win) {
-    displayOverview(win);
 }

@@ -1,8 +1,12 @@
-#include "system.hpp"
 #include <fstream>
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <vector>
+#include <stdexcept>
+#include <cstdio>
+
+#include "system.hpp"
 
 using namespace std;
 
@@ -26,3 +30,29 @@ string getUptime() {
 
     return ss.str();
 }
+
+vector<string> getSystemLogs(int num_lines){
+    string cmd;
+    if(num_lines <= 0){
+        cmd = "journalctl";
+    }
+    else{
+        string cmd = "journalctl -n" + to_string(num_lines);
+    }
+
+    vector<string> result;
+    char buffer[128];
+    string line;
+    
+    FILE* pipe = popen(cmd.c_str(), "r");
+    if(!pipe) return {};
+
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr){
+        result.push_back(string(buffer));
+    }
+    
+    pclose(pipe);
+    return result;
+}
+    
+    

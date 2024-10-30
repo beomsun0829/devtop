@@ -1,6 +1,8 @@
-#include "user.hpp"
 #include <unistd.h>
 #include <string>
+
+#include "user.hpp"
+
 using namespace std;
 
 string getCurrentUser() {
