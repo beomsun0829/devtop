@@ -37,12 +37,11 @@ vector<string> getSystemLogs(int num_lines){
         cmd = "journalctl";
     }
     else{
-        string cmd = "journalctl -n" + to_string(num_lines);
+        cmd = "journalctl -n" + to_string(num_lines);
     }
 
     vector<string> result;
     char buffer[128];
-    string line;
     
     FILE* pipe = popen(cmd.c_str(), "r");
     if(!pipe) return {};
