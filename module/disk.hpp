@@ -2,8 +2,14 @@
 #define DISK_HPP
 
 #include <string>
-using namespace std;
 
-float getDiskUsage(const string& path);
+struct DiskSpace {
+    unsigned long total;
+    unsigned long available;
+    unsigned long used;
+    float usage_percentage;
+};
+
+DiskSpace getDiskUsage(const std::string& path);
 
 #endif

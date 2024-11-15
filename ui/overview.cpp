@@ -18,13 +18,12 @@ void displayOverview(WINDOW* win) {
     int text_width = 12;
 
     CPU cpu;
+    DiskSpace disk_space = getDiskUsage("/");
     cpu.getUsage();
-    getDiskUsage("/");
     usleep(100000);
 
     float cpu_usage = cpu.getUsage();
     float mem_usage = getMemoryUsage();
-    float disk_usage = getDiskUsage("/");
     string active_interface;
     NetworkStats net_stats = getMainNetworkUsage(active_interface);
     ProcessCount proc_info = getProcessCount();
@@ -40,8 +39,7 @@ void displayOverview(WINDOW* win) {
     
     mvwprintw(win, 8, 1, "%-*s %s%% %s", text_width, "Memory", formatPercentage(mem_usage).c_str(), usageBar(terminal_width, mem_usage).c_str());
     
-    mvwprintw(win, 10, 1, "%-*s %s%% %s", text_width, "Disk", formatPercentage(disk_usage).c_str(), usageBar(terminal_width, disk_usage).c_str());
-
+    mvwprintw(win, 10, 1, "%-*s %s%% %s", text_width, "Disk", formatPercentage(disk_space.usage_percentage).c_str(), usageBar(terminal_width, disk_space.usage_percentage).c_str());
     mvwprintw(win, 12, 1, "%-*s %s %.2f %s %.2f", text_width, "Network", "Download", net_stats.download_speed, "Upload", net_stats.upload_speed);
     
     mvwprintw(win, 14, 1, "%-*s %s %d  %s %d  %s %d", text_width, "Process", "Total", proc_info.total, "Running", proc_info.running, "Sleeping", proc_info.sleeping);  

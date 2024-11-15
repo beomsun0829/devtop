@@ -1,8 +1,9 @@
 #include <ncurses.h>
 #include <unistd.h>
 
-#include "ui/overview.hpp"
 #include "ui/menubar.hpp"
+#include "ui/overview.hpp"
+#include "ui/hardware.hpp"
 #include "ui/system_logs.hpp"
 
 void run_menu(int selected_menu, WINDOW* main_win, int ch);
@@ -61,8 +62,10 @@ void run_menu(int selected_menu, WINDOW* main_win, int ch){
         case 0:
             displayOverview(main_win);
             break;
-
-        case 5:
+        case 3:
+            displayHardware(main_win);
+            break;
+        case 4:
             displaySystemLogs(main_win, ch);
             break;
 

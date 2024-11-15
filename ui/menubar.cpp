@@ -11,7 +11,7 @@ void drawMenuBar(WINDOW* win, int selected) {
     getmaxyx(win, win_max_y, win_max_x);
 
     vector<string> menu_items = {
-        "1. Overview", "2. Process", "3. Network", "4. I/O Disk", "5. Hardware", "6. System Logs"
+        "1. Overview", "2. Process", "3. Network", "4. Hardware", "5. System Logs"
     };
 
     int num_items = menu_items.size();
