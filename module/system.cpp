@@ -31,27 +31,28 @@ string getUptime() {
     return ss.str();
 }
 
-vector<string> getSystemLogs(int num_lines){
-    string cmd;
-    if(num_lines <= 0){
-        cmd = "journalctl";
+vector<string> getSystemLogs(int num_lines, int log_level, const string& search_keyword) {
+    string cmd = "journalctl";
+
+    if (log_level >= 0) {
+        cmd += " -p " + to_string(log_level);
     }
-    else{
-        cmd = "journalctl -n" + to_string(num_lines);
+    if (num_lines > 0) {
+        cmd += " -n " + to_string(num_lines);
+    }
+    if (!search_keyword.empty()) {
+        cmd += " | grep -i '" + search_keyword + "'";
     }
 
     vector<string> result;
     char buffer[128];
-    
     FILE* pipe = popen(cmd.c_str(), "r");
-    if(!pipe) return {};
+    if (!pipe) return {};
 
-    while (fgets(buffer, sizeof(buffer), pipe) != nullptr){
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
         result.push_back(string(buffer));
     }
-    
+
     pclose(pipe);
     return result;
 }
-    
-    
