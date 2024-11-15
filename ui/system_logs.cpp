@@ -1,6 +1,7 @@
 #include <ncurses.h>
 #include <string>
 #include <vector>
+#include <regex>
 #include <ctime>
 
 #include "system.hpp"
@@ -25,15 +26,47 @@ void displaySystemLogs(WINDOW* win, int ch) {
 
     if (ch == KEY_UP && current_line > 0) {
         current_line--;
-    }
-    else if (ch == KEY_DOWN && current_line + LINES_PER_PAGE < num_lines) {
+    } else if (ch == KEY_DOWN && current_line + LINES_PER_PAGE < num_lines) {
         current_line++;
     }
 
     werase(win);
 
+    int max_y, max_x;
+    getmaxyx(win, max_y, max_x);
+
+    regex timestamp_regex(R"(\b\w{3} \d{2} \d{2}:\d{2}:\d{2})");
+    regex warning_regex(R"(\b(warning|warn|WARN|WARNING)\b)");
+    regex error_regex(R"(\b(error|fail|failed|ERROR|FAIL)\b)");
+
     for (int i = 0; i < LINES_PER_PAGE && (current_line + i) < num_lines; i++) {
-        mvwprintw(win, i, 1, "%s", logs[current_line + i].c_str());
+        string log = logs[current_line + i];
+
+        string timestamp = " ";
+        smatch match;
+        if (regex_search(log, match, timestamp_regex)) {
+            timestamp = match.str();
+            log = log.substr(match.position() + match.length());
+        }
+
+        size_t user_pos = log.find("user-");
+        string username = (user_pos != string::npos) ? "user" : "";
+        log = log.substr(log.find_first_of(" ", user_pos + 5) + 1);
+
+        string message_type = "[INFO]";
+        if (regex_search(log, error_regex)) {
+            message_type = "[ERROR]";
+        } else if (regex_search(log, warning_regex)) {
+            message_type = "[WARN]";
+        }
+
+        string formatted_log = timestamp + " " + message_type + " " + log;
+
+        if (formatted_log.length() > max_x - 1) {
+            formatted_log = formatted_log.substr(0, max_x - 1);
+        }
+
+        mvwprintw(win, i + 1, 0, "%s", formatted_log.c_str());
     }
 
     wrefresh(win);

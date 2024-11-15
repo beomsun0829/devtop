@@ -5,8 +5,6 @@
 #include "ui/menubar.hpp"
 #include "ui/system_logs.hpp"
 
-#define FRAMES_PER_SECOND 10
-
 void run_menu(int selected_menu, WINDOW* main_win, int ch);
 
 int main() {
@@ -48,7 +46,7 @@ int main() {
         wnoutrefresh(menu_win);
         doupdate();
 
-        napms(50);
+        napms(10);
     }
 
     delwin(main_win);
