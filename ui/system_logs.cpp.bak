@@ -7,7 +7,7 @@
 
 using namespace std;
 
-const int INITIAL_LOAD_SIZE = 100;
+const int LOAD_SIZE = 100;
 const int MAX_LOG_LEVEL = 4;
 
 void displaySystemLogs(WINDOW* win, int ch) {
@@ -17,17 +17,16 @@ void displaySystemLogs(WINDOW* win, int ch) {
     static bool initialized = false;
     static time_t last_fetch_time = 0;
     static int log_level = -1;
-    static int load_size = INITIAL_LOAD_SIZE;
 
     time_t current_time = time(nullptr);
 
     if (logs.empty() || difftime(current_time, last_fetch_time) >= 5) {
-        logs = getSystemLogs(load_size, log_level);
+        logs = getSystemLogs(LOAD_SIZE, log_level);
         num_lines = logs.size();
         last_fetch_time = current_time;
 
-        if (!initialized && num_lines > load_size) {
-            current_line = num_lines - load_size;
+        if (!initialized && num_lines > LOAD_SIZE) {
+            current_line = num_lines - LOAD_SIZE;
             initialized = true;
         }
     }
@@ -40,24 +39,19 @@ void displaySystemLogs(WINDOW* win, int ch) {
     else if (ch == KEY_F(6)) log_level = -1;
 
     if (ch >= KEY_F(1) && ch <= KEY_F(6)) {
-        load_size = INITIAL_LOAD_SIZE;
-        logs = getSystemLogs(load_size, log_level);
+        logs = getSystemLogs(LOAD_SIZE, log_level);
         num_lines = logs.size();
         current_line = 0;
     }
 
-    if (ch == KEY_UP && current_line > 0) {
-        current_line--;
-    } else if (ch == KEY_UP && current_line == 0) {
-        int previous_num_lines = num_lines;
-        load_size += INITIAL_LOAD_SIZE; 
-        logs = getSystemLogs(load_size, log_level);
+    if (ch == KEY_UP && current_line > 0) current_line--;
+    else if (ch == KEY_UP && current_line == 0) {
+        int prev_num_lines = num_lines;
+        vector<string> older_logs = getSystemLogs(LOAD_SIZE, log_level);
+        logs.insert(logs.begin(), older_logs.begin(), older_logs.end());
         num_lines = logs.size();
-
-        current_line += (num_lines - previous_num_lines);
-    } else if (ch == KEY_DOWN && current_line + 1 < num_lines) {
-        current_line++;
-    }
+        current_line += older_logs.size();
+    } else if (ch == KEY_DOWN && current_line + LOAD_SIZE < num_lines) current_line++;
 
     werase(win);
 
