@@ -1,2 +1,3 @@
 hardware
-	add neofetch like info
+    add neofetch like info
+    add usage bar
