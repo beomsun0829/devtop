@@ -84,11 +84,12 @@ void displaySystemLogs(WINDOW* win, int ch) {
         string username = (user_pos != string::npos) ? "user" : "";
         log = log.substr(log.find_first_of(" ", user_pos + 5) + 1);
 
-        string message_type = "[INFO]";
-        if (regex_search(log, error_regex)) message_type = "[ERROR]";
-        else if (regex_search(log, warning_regex)) message_type = "[WARN]";
+        //string message_type = "[INFO]";
+        //if (regex_search(log, error_regex)) message_type = "[ERROR]";
+        //else if (regex_search(log, warning_regex)) message_type = "[WARN]";
 
-        string formatted_log = timestamp + " " + message_type + " " + log;
+        //string formatted_log = timestamp + " " + message_type + " " + log;
+        string formatted_log = timestamp + " " + log;
 
         if (formatted_log.length() > max_x - 1) {
             formatted_log = formatted_log.substr(0, max_x - 1);
