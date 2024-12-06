@@ -62,4 +62,44 @@ vector<ProcessInfo> getTopProcesses() {
     pclose(pipe);
     return processes;
 }
-    
+
+vector<ProcessDetails> getTopProcessesDetails() {
+    vector<ProcessDetails> processes;
+    const char* cmd = "ps -eo pid,pgid,comm,%cpu,%mem,state,nlwp,user,lstart --sort=-%cpu | head -n 30";
+
+    FILE* pipe = popen(cmd, "r");
+    if (!pipe) {
+        cerr << "Error: Unable to run the ps command" << endl;
+        return processes;
+    }
+
+    char buffer[256];
+    bool skip_header = true;
+
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        if (skip_header) {
+            skip_header = false;
+            continue;
+        }
+
+        istringstream line(buffer);
+        ProcessDetails process;
+
+        line >> process.pid
+             >> process.pgid
+             >> process.command
+             >> process.cpu_usage
+             >> process.memory_usage
+             >> process.state
+             >> process.threads
+             >> process.user;
+
+        getline(line, process.start_time);
+
+        processes.push_back(process);
+    }
+
+    pclose(pipe);
+    return processes;
+}
+

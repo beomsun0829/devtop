@@ -3,6 +3,7 @@
 
 #include "ui/menubar.hpp"
 #include "ui/overview.hpp"
+#include "ui/process_ui.hpp"
 #include "ui/hardware.hpp"
 #include "ui/network_ui.hpp"
 #include "ui/system_logs.hpp"
@@ -62,6 +63,9 @@ void run_menu(int selected_menu, WINDOW* main_win, int ch){
     switch(selected_menu){
         case 0:
             displayOverview(main_win);
+            break;
+        case 1:
+            displayProcessUI(main_win);
             break;
         case 2:
             displayNetwork(main_win);
